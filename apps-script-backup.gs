@@ -1,46 +1,35 @@
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("PreSignups");
-  var data = JSON.parse(e.postData.contents || "{}");
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("PreSignups");
+  const data = JSON.parse(e.postData.contents || "{}");
 
-  // Honeypot: silently accept bot submissions without saving them.
   if (data.company && String(data.company).trim() !== "") {
     return ContentService
       .createTextOutput(JSON.stringify({ success: true }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  var name = String(data.name || "").trim();
-  var email = String(data.email || "").toLowerCase().trim();
-  var source = String(data.source || "ApexSites Coming Soon Page").trim();
+  const email = String(data.email || "").toLowerCase().trim();
+  const name = String(data.name || "").trim();
 
-  if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+  const existing = sheet.getLastRow() > 1
+    ? sheet.getRange(2, 3, sheet.getLastRow() - 1, 1).getValues().flat().map(String)
+    : [];
+
+  if (existing.includes(email)) {
     return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: "Invalid submission" }))
+      .createTextOutput(JSON.stringify({ success: true, duplicate: true }))
       .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  var lastRow = sheet.getLastRow();
-  if (lastRow > 1) {
-    var emails = sheet.getRange(2, 3, lastRow - 1, 1).getValues().flat().map(function(value) {
-      return String(value || "").toLowerCase().trim();
-    });
-
-    if (emails.indexOf(email) !== -1) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ success: true, duplicate: true }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
   }
 
   sheet.appendRow([
     new Date(),
     name,
     email,
-    source,
+    data.source || "ApexSites Coming Soon Splash Page",
     "",
     "",
     data.page || "",
-    data.referral_url || "",
+    data.referrer || "",
     data.utm_source || "",
     data.utm_medium || "",
     data.utm_campaign || "",
@@ -51,7 +40,7 @@ function doPost(e) {
   MailApp.sendEmail(
     "awesome@apexsites.ai",
     "New ApexSites Pre-Signup",
-    name + " (" + email + ") just joined the ApexSites pre-launch list."
+    `${name} (${email}) joined the ApexSites pre-launch list.`
   );
 
   return ContentService

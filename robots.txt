@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://comingsoon.apexsites.ai/sitemap.xml
