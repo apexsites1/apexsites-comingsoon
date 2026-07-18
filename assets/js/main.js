@@ -60,6 +60,13 @@ form.addEventListener("submit", async (event) => {
   button.textContent = "Joining...";
   button.disabled = true;
 
+    const mlData = new FormData();
+    mlData.append('fields[email]', email);
+    mlData.append('fields[name]', name);
+    mlData.append('ml-submit', '1');
+    mlData.append('anticsrf', 'true');
+    fetch('https://assets.mailerlite.com/jsonp/2516794/forms/193301764633527529/subscribe', { method: 'POST', mode: 'no-cors', body: mlData }).catch(function(){});
+
   const payload = {
     name,
     email,
