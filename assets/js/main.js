@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/a/macros/apexsites.ai/s/AKfycbw0dyr0M7N2FF783LcreOqeVhmQfRHitvIEpM9yRqf6fYn6H2GYgcsW9fxi02Tz-Ij9/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzausFO8ADEZp-oUel36p4n07mQ9lqc8HgSBcTgz6bhONSowLrfdhPzRdlYgYq-9k/exec";
 
 const form = document.getElementById("preSignupForm");
 const message = document.getElementById("formMessage");
